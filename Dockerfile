@@ -1,14 +1,13 @@
-FROM containrrr/watchtower as watchtower
-FROM alpine:3.17.0
+FROM golang:1.9.2 as builder
 
-RUN apk add --no-cache \
-    ca-certificates \
-    tzdata
+WORKDIR /go/src/github.com/mietzen/watchtower-with-health-check
+COPY healthcheck ./healthcheck
 
-LABEL "com.centurylinklabs.watchtower"="true"
-EXPOSE 8080
+RUN \
+  GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o health-check "github.com/mietzen/watchtower-with-health-check/healthcheck"
 
-COPY --from=watchtower /watchtower /
+FROM containrrr/watchtower
 
-ENTRYPOINT ["/watchtower"]
-HEALTHCHECK CMD /bin/true
+COPY --from=builder /go/src/github.com/mietzen/watchtower-with-health-check/health-check ./healthcheck
+
+HEALTHCHECK --interval=1s --timeout=1s --start-period=2s --retries=3 CMD [ "/healthcheck" ]
