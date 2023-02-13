@@ -38,7 +38,7 @@ jobs:
         DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
       run: |
         docker buildx build \
-          --tag "${DOCKER_USER}/watchtower:latest" \
+          --tag "${DOCKER_USER}/cloudflared:latest" \
           --platform=linux/amd64,linux/arm64,linux/arm/v7 \
           --push \
           -f Dockerfile .

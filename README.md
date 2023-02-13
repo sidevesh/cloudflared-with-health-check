@@ -1,5 +1,7 @@
-# watchtower with health check
+# Erisa's Cloudflared Docker Image with curl
 
-`docker run -d --name watchtower -v /var/run/docker.sock:/var/run/docker.sock mietzen/watchtower`
+## To run with health check:
 
-https://hub.docker.com/r/mietzen/watchtower
+`docker run --health-cmd='curl --fail http://localhost:3333/ready' --health-interval=60s --health-timeout=10s cloudflare/cloudflared:latest tunnel --no-autoupdate --metrics localhost:3333 --hello-world`
+
+https://hub.docker.com/r/sidevesh/cloudflared
